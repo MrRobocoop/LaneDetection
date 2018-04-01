@@ -8,7 +8,7 @@ import numpy as np
 start = time.time()
 end = time.time()
 
-pts1 = np.float32([[118,60], [188,60], [287,180], [11, 183]]) 
+pts1 = np.float32([[118,60], [188,60], [287,180], [11, 183]])
 pts2 = np.float32([[25,10], [160, 10], [160, 300], [25, 300]])
 erode_k = np.uint8([[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0]])
 M = cv2.getPerspectiveTransform(pts1,pts2)
@@ -27,7 +27,7 @@ for i in range(1, 99):
     print 1/(end-start)
     start = time.time()
     idx = idx+1
-    image = cv2.imread('%s.jpg' %str(idx),1)
+    image = cv2.imread('dataset/%s.jpg' %str(idx),1)
     img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # cut out image
     #image = ii.image_cut_out(image, 0, 320, 0, 200)
@@ -35,7 +35,7 @@ for i in range(1, 99):
     #test_image = cv2.imread('shit.jpg', 1)
 
     #rows, cols, ch = test_image.shape
-    
+
     cv2.warpPerspective(img_gray, M,(200, 320),fushi,cv2.INTER_LINEAR)
     kernel = np.ones((7,7), np.float32) / 25
     dst = cv2.filter2D(fushi, -1, kernel)
