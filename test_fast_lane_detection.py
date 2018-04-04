@@ -2,7 +2,6 @@ import time
 import cv2
 import cv2.cv as cv
 import numpy as np
-from sklearn.cluster import KMeans
 
 # initialize the camera and grab a reference to the raw camera capture
 
@@ -45,11 +44,6 @@ for i in range(1, 99):
     dst = cv2.bitwise_and(dst,dst, mask=mask)
     dst = cv2.dilate(dst, erode_k)
     dst = cv2.dilate(dst, erode_k)
-
-    clf = KMeans(n_clusters=20)
-    s = clf.fit(dst)
-    print s
-
     #dst = cv2.warpPerspective(dst, M, (200,320))
     lines = cv2.HoughLines(dst,1, np.pi/180, 1)
     print lines
