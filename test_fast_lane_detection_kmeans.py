@@ -1,8 +1,8 @@
 import time
 import cv2
-import cv2.cv as cv
 import numpy as np
 from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
 
 # initialize the camera and grab a reference to the raw camera capture
 
@@ -21,7 +21,10 @@ fushi = np.ones((320,200), np.uint8)*255
 mask = np.ones((240,320), np.uint8)*255
 mask = cv2.warpPerspective(mask, M,(200, 320))
 mask = cv2.erode(mask, erode_k)
-for i in range(1, 99):
+
+plt.axis([0, 200, 0, 300])
+
+for i in range(1, 299):
     # grab the raw NumPy array representing the image, then initialize the timestamp
     # and occupied/unoccupied text
     end = time.time()
@@ -46,13 +49,57 @@ for i in range(1, 99):
     dst = cv2.dilate(dst, erode_k)
     dst = cv2.dilate(dst, erode_k)
 
-    clf = KMeans(n_clusters=20)
-    s = clf.fit(dst)
-    print s
+    print dst
+
+    els = []
+
+    for m in range(1, 300):
+        for n in range(1, 200):
+            if dst[m][n] == 255:
+                els.append([m, n])
+
+    if len(els) != 0:
+
+        k_means = KMeans(n_clusters=2)
+        k_means.fit(els)
+        center = k_means.cluster_centers_
+        labels = k_means.labels_
+        error = k_means.inertia_
+
+        # plot points using different colors
+        #colors = cm.Spectral(labels.astype(float) / 2)
+
+        print center
+        print labels
+        print error
+
+        x1 = []
+        y1 = []
+        x3 = []
+        y3 = []
+
+        for x in range(len(els)):
+            if k_means.labels_[x] == 0:
+                x1.append(els[x][0])
+                y1.append(els[x][1])
+            elif k_means.labels_[x] == 1:
+                x3.append(els[x][0])
+                y3.append(els[x][1])
+
+        plt.scatter(x1, y1, c="blue")
+        plt.scatter(x3, y3, c="green")
+
+        x2 = [x[0] for x in center]
+        y2 = [x[1] for x in center]
+        plt.scatter(x2, y2, c="red")
+
+        plt.pause(2)
+        plt.show()
 
     #dst = cv2.warpPerspective(dst, M, (200,320))
     lines = cv2.HoughLines(dst,1, np.pi/180, 1)
     print lines
+    
     try:
         line = lines[:,0,:]
         for rho,theta in line[:]:
@@ -71,6 +118,7 @@ for i in range(1, 99):
                 pass
     except:
         pass
+        
     cv2.imshow("Frame", dst)
     key = cv2.waitKey(100) & 0xFF
     # clear the stream in preparation for the next frame
