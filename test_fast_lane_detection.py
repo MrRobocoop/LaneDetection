@@ -13,8 +13,8 @@ def lane_pipline():
     end = time.time()
 
     #pts1 = np.float32([[90,1], [230,1], [320,203], [1, 203]])
-    pts1 = np.float32([[93, 90], [227, 90], [287, 180], [33, 183]])
-    pts2 = np.float32([[30,0], [170, 0], [170, 320], [30, 320]])
+    pts1 = np.float32([[115, 108], [190, 108], [264, 197], [61, 198]])
+    pts2 = np.float32([[100,150], [200, 150], [200, 280], [100, 280]])
     erode_k = np.uint8([[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0]])
     M = cv2.getPerspectiveTransform(pts1,pts2)
     idx = 0
@@ -22,9 +22,9 @@ def lane_pipline():
     mapy = np.load('caliberation/caliberation/mapy.npy')
 
     # capture frames from the camera
-    fushi = np.ones((320,200), np.uint8)*255
+    fushi = np.ones((320,300), np.uint8)*255
     mask = np.ones((240,320), np.uint8)*255
-    mask = cv2.warpPerspective(mask, M,(200, 320))
+    mask = cv2.warpPerspective(mask, M,(300, 320))
     mask = cv2.erode(mask, erode_k)
     mask = cv2.erode(mask, erode_k)
     for i in range(1, 299):
@@ -44,13 +44,13 @@ def lane_pipline():
 
         #rows, cols, ch = test_image.shape
 
-        cv2.warpPerspective(img_gray, M,(200, 320),fushi,cv2.INTER_LINEAR)
+        cv2.warpPerspective(img_gray, M,(300, 320),fushi,cv2.INTER_LINEAR)
         kernel = np.ones((7,7), np.float32) / 25
         dst = cv2.filter2D(fushi, -1, kernel)
         r, countour_fushi = cv2.threshold(fushi, 0, 255, cv2.THRESH_OTSU)
         dst = cv2.Canny(dst, 40, 120)
         #dst = cv2.dilate(dst,erode_k)
-        dst = cv2.bitwise_and(dst,dst, mask=mask)
+        #dst = cv2.bitwise_and(dst,dst, mask=mask)
         #dst = cv2.dilate(dst, erode_k)
         dst = cv2.dilate(dst, erode_k)
         #dst = cv2.warpPerspective(dst, M, (200,320))
