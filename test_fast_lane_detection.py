@@ -18,6 +18,8 @@ def lane_pipline():
     erode_k = np.uint8([[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0]])
     M = cv2.getPerspectiveTransform(pts1,pts2)
     idx = 0
+    mapx = np.load('caliberation/caliberation/mapx.npy')
+    mapy = np.load('caliberation/caliberation/mapy.npy')
 
     # capture frames from the camera
     fushi = np.ones((320,200), np.uint8)*255
@@ -33,7 +35,8 @@ def lane_pipline():
         start = time.time()
         idx = idx+1
         image = cv2.imread('data_all/%s.jpg' %str(idx),1)
-        img_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        undis_image = cv2.remap(image, mapx, mapy, cv2.INTER_NEAREST)
+        img_gray = cv2.cvtColor(undis_image, cv2.COLOR_BGR2GRAY)
         # cut out image
         #image = ii.image_cut_out(image, 0, 320, 0, 200)
 
@@ -56,7 +59,7 @@ def lane_pipline():
 
         cv2.imshow("Frame", dst)
         cv2.imshow("origin", fushi)
-        cv2.imshow("boundary", countour_fushi)
+        cv2.imshow("boundary", undis_image)
         ret = find_lines(dst, margin = 50 )
         plt.figure(1)
         plt.axis([0, 200, 320, 0])
@@ -78,13 +81,14 @@ def lane_pipline():
 
 
         key = cv2.waitKey(100) & 0xFF
-        plt.show()
+
         # clear the stream in preparation for the next frame
         #rawCapture.truncate(0)
         # if the `q` key was pressed, break from the loop
         if key == ord("q"):
             cv2.destroyAllWindows()
             break
+        plt.show()
 
 if __name__ == '__main__':
     lane_pipline()

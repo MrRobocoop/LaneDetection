@@ -56,20 +56,32 @@ camera_matrix[0][2]=(gray.shape[::-1][0]-1)/2
 camera_matrix[1][2]=(gray.shape[::-1][1]-1)/2
 mtx = camera_matrix
 dist = dist_coeffs
+test = cv2.imread('254.jpg')
+#gray = cv2.cvtColor(test,cv2.COLOR_BGR2GRAY)
 ret, mtx, dist, rvecs, tvecs = cv2.fisheye.calibrate(objpoints, imgpoints, gray.shape[::-1], mtx, dist, rvecs, tvecs, flags = calib_flags)
+print gray.shape[::-1]
 for i in range(1,8):
-    img = cv2.imread('%s.jpg'%str(i))
+    img = cv2.imread('254.jpg')
+    #img = cv2.resize(img, (2592, 1944), interpolation=cv2.INTER_NEAREST)
     h,  w = img.shape[:2]
     newcameramtx, roi=cv2.getOptimalNewCameraMatrix(mtx,dist,(w,h),1,(w,h))
 
     nk = mtx.copy()
-    nk[0,0] = mtx[0,0]/1.5
-    nk[1,1] = mtx[1,1]/1.5
 
-    mapx,mapy = cv2.fisheye.initUndistortRectifyMap(mtx,dist,np.eye(3),nk,(w,h),5)
+    nk = mtx/8.1
+    nk[0, 0] = mtx[0, 0] / 8.1
+    nk[1, 1] = mtx[1, 1] / 8.1
+    nk[2,2] = mtx[2,2]
+
+    new_nk = nk.copy();
+    new_nk[0,0] = nk[0,0]/1.5
+    new_nk[1,1] = new_nk[1,1]/1.5
+    mapx,mapy = cv2.fisheye.initUndistortRectifyMap(nk,dist,np.eye(3),new_nk,(w,h),5)
+    np.save('mapx.npy', mapx)
+    np.save('mapy.npy', mapy)
     dst = cv2.remap(img,mapx,mapy,cv2.INTER_NEAREST)
-    #dst = cv2.fisheye.undistortImage(img,mtx,dist,mtx)
-
+    #dst = cv2.fisheye.undistortImage(img,mtx,dist,newcameramtx)
+    #dst = cv2.resize(dst, (320, 240), interpolation=cv2.INTER_NEAREST)
     # crop the image
     x,y,w,h = roi
     #dst = dst[y:y+h, x:x+w]
@@ -81,6 +93,8 @@ for i in range(1,8):
     x,y,w,h = roi
     #dst = dst[y:y+h, x:x+w]
     cv2.imwrite('calibresult%s.bmp'%str(i),dst)
+    cv2.imwrite('mapx.jpg', mapx)
+    cv2.imwrite('mapy.jpg', mapy)
     cv2.imshow('img',dst)
     cv2.waitKey(500)
 cv2.destroyAllWindows()
