@@ -1,0 +1,10 @@
+raspistill -o 1.jpg
+raspistill -o 2.jpg
+raspistill -o 3.jpg
+raspistill -o 4.jpg
+raspistill -o 5.jpg
+raspistill -o 6.jpg
+raspistill -o 7.jpg
+raspistill -o 8.jpg
+raspistill -o 9.jpg
+raspistill -o 10.jpg
