@@ -59,6 +59,8 @@ dist = dist_coeffs
 test = cv2.imread('254.jpg')
 #gray = cv2.cvtColor(test,cv2.COLOR_BGR2GRAY)
 ret, mtx, dist, rvecs, tvecs = cv2.fisheye.calibrate(objpoints, imgpoints, gray.shape[::-1], mtx, dist, rvecs, tvecs, flags = calib_flags)
+np.save('mtx.npy',mtx)
+np.save('dist.npy',dist)
 print gray.shape[::-1]
 for i in range(1,8):
     img = cv2.imread('254.jpg')

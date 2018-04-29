@@ -47,9 +47,10 @@ def classify_line(point, list_line, margin):
                 new_line_counter = new_line_counter + 1
 
         if (new_line_counter == len(list_line)):
-            line_id = str(len(list_line) + 1)
-            create_line['line' + line_id] = line_class(point)
-            exec ("list_line.append(line" + line_id + ")")
+            pass
+            #line_id = str(len(list_line) + 1)
+            #create_line['line' + line_id] = line_class(point)
+            #exec ("list_line.append(line" + line_id + ")")
 
     else:
         line_id = str(len(list_line)+1)
