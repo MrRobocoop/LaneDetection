@@ -1,0 +1,5 @@
+# depslib dependency file v1.0
+1526059097 source:/home/raosiyue/raspi_lane_detection/LaneDetection/CPP/test_polyfit/testpolyfit/main.cpp
+	<iostream>
+	<armadillo>
+
